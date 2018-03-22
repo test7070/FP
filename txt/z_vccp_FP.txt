@@ -108,7 +108,7 @@ when a_stype='4' and a_typea='退' then '樣品退回單' else '' end)
  
 if(@t_showprice = '0')
 begin
-	update @tmp set a_tax = null,a_money = null,a_total = null,b_price = null,b_total = null
+	update @tmp set b_price = null,b_total = null
 end
 
 update a
