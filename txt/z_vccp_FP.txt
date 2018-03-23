@@ -22,6 +22,7 @@ declare @tmp table(
 	a_tax float,
 	a_money float,
 	a_total float,
+	a_weight float,
 	b_uno nvarchar(100),
 	b_pno nvarchar(30),
 	b_products nvarchar(2000),
@@ -39,7 +40,7 @@ insert into @tmp
 		'0',ROW_NUMBER()over(partition by a.noa order by a.noa,b.noq),1,1,a.cno,
 		a.noa,a.typea,a.stype,a.custno,c.comp,a.tel,
 		(case when a.addr2!='' then a.addr2 else a.addr end),a.datea,a.memo,
-		a.tax,a.money,a.total,b.uno,dbo.charbr(b.productno,10),b.product,b.unit,b.dime,b.width,b.lengthb,b.weight,b.mount,b.price,b.total
+		a.tax,a.money,a.total,a.weight,b.uno,dbo.charbr(b.productno,10),b.product,b.unit,b.dime,b.width,b.lengthb,b.weight,b.mount,b.price,b.total
 	from view_vcc a
 	left join view_vccs b on a.noa = b.noa
 	left join cust c on a.custno = c.noa
@@ -94,8 +95,8 @@ begin
 			set @orderno = @orderno +1
 		end
 	end
-	insert into @tmp(gno,orderno,p1,a_noa,a_typea,a_comp,a_tax,a_money,a_total,a_memo)
-		select '1',(@t_pageline+1),p1,a_noa,a_typea,a_comp,MAX(a_tax),MAX(a_money),MAX(a_total),a_memo from @tmp where gno=0 and a_noa=@a_noa and p1=@p1 group by a_noa,p1,a_typea,a_comp,a_memo
+	insert into @tmp(gno,orderno,p1,a_noa,a_typea,a_comp,a_tax,a_money,a_total,a_weight,a_memo)
+		select '1',(@t_pageline+1),p1,a_noa,a_typea,a_comp,MAX(a_tax),MAX(a_money),MAX(a_total),MAX(a_weight),a_memo from @tmp where gno=0 and a_noa=@a_noa and p1=@p1 group by a_noa,p1,a_typea,a_comp,a_memo
 	insert into @tmp(gno,orderno,p1,a_noa,a_typea) 
 		select '2',(@t_pageline+2),p1,a_noa,a_typea from @tmp where gno=0 and a_noa=@a_noa and p1=@p1 group by a_noa,p1,a_typea
 	fetch next from cursor_table
@@ -124,6 +125,7 @@ select
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_tax),1)),4,12)) a_tax,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_money),1)),4,12)) a_money,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_total),1)),4,12)) a_total,
+	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_weight),1)),4,12)) a_weight,
 	b_uno,dbo.charbr(b_products,38) b_products,b_dime,b_width,b_lengthb,b_unit, b_weight,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,b_mount),1)),4,12)) b_mount,b_price,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,b_total),1)),4,12)) b_total,
