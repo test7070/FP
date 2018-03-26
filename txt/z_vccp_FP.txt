@@ -30,6 +30,10 @@ declare @tmp table(
 	b_dime float,
 	b_width float,
 	b_lengthb float,
+	b_spec nvarchar(max),
+	b_fd nvarchar(10),
+	b_fw nvarchar(10),
+	b_fl nvarchar(10),
 	b_weight float,
 	b_mount float,
 	b_price float,
@@ -40,7 +44,7 @@ insert into @tmp
 		'0',ROW_NUMBER()over(partition by a.noa order by a.noa,b.noq),1,1,a.cno,
 		a.noa,a.typea,a.stype,a.custno,c.comp,a.tel,
 		(case when a.addr2!='' then a.addr2 else a.addr end),a.datea,a.memo,
-		a.tax,a.money,a.total,a.weight,b.uno,dbo.charbr(b.productno,10),b.product,b.unit,b.dime,b.width,b.lengthb,b.weight,b.mount,b.price,b.total
+		a.tax,a.money,a.total,a.weight,b.uno,dbo.charbr(b.productno,10),b.product,b.unit,b.dime,b.width,b.lengthb,b.spec,'*','*','*',b.weight,b.mount,b.price,b.total
 	from view_vcc a
 	left join view_vccs b on a.noa = b.noa
 	left join cust c on a.custno = c.noa
@@ -126,7 +130,7 @@ select
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_money),1)),4,12)) a_money,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_total),1)),4,12)) a_total,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_weight),1)),4,12)) a_weight,
-	b_uno,dbo.charbr(b_products,38) b_products,b_dime,b_width,b_lengthb,b_unit, b_weight,
+	b_uno,dbo.charbr(b_products,38) b_products,b_dime,b_width,b_lengthb,b_unit,b_weight,b_spec,b_fd,b_fw,b_fl,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,b_mount),1)),4,12)) b_mount,b_price,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,b_total),1)),4,12)) b_total,
 	p2,p1,a_cno
