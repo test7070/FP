@@ -30,9 +30,7 @@ declare @tmp table(
 	b_width float,
 	b_lengthb float,
 	b_spec nvarchar(max),
-	b_fd nvarchar(10),
-	b_fw nvarchar(10),
-	b_fl nvarchar(10),
+	b_size nvarchar(max),
 	b_weight float,
 	b_mount float,
 	b_price float,
@@ -43,7 +41,7 @@ insert into @tmp
 		'0',ROW_NUMBER()over(partition by a.noa order by a.noa,b.noq),1,1,a.cno,
 		a.noa,a.typea,a.stype,a.custno,c.comp,a.tel,
 		(case when a.addr2!='' then a.addr2 else a.addr end),a.datea,a.memo,
-		a.tax,a.money,a.total,a.weight,b.uno,dbo.charbr(b.productno,10),b.product,b.unit,b.dime,b.width,b.lengthb,b.spec,'*','*','*',b.weight,b.mount,b.price,b.total
+		a.tax,a.money,a.total,a.weight,b.uno,dbo.charbr(b.productno,10),b.product,b.unit,b.dime,b.width,b.lengthb,b.spec,b.size,b.weight,b.mount,b.price,b.total
 	from view_vcc a
 	left join view_vccs b on a.noa = b.noa
 	left join cust c on a.custno = c.noa
@@ -115,19 +113,13 @@ when a_stype='4' and a_typea='退' then '樣品退回單' else '' end)
  
 if(@t_showprice = '0')
 begin
-	update @tmp set b_price = null,b_total = null
+	update @tmp set b_price=null, b_total=null, a_money=null, a_tax=null, a_total=null
 end
 
 update a
 set p2=(select MAX(p1) from @tmp where a_noa=a.a_noa)
 from @tmp a
 
-set b_lengthb = @b_lengthb
-
-if(@b_lengthb = '0')
-begin
-	update @tmp set b_fl = null,b_lengthb = null
-end
 
 select
 	gno,a_noa,a_typea,a_stype,a_custno,a_comp,a_tel,a_addr,a_datea
@@ -136,8 +128,7 @@ select
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_money),1)),4,12)) a_money,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_total),1)),4,12)) a_total,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_weight),1)),4,12)) a_weight,
-	b_uno,dbo.charbr(b_products,38) b_products,b_dime,b_width,b_lengthb,b_unit,b_weight,b_spec,b_fd,b_fw,b_fl,
+	b_uno,dbo.charbr(b_products,38) b_products,b_dime,b_width,b_lengthb,b_unit,b_weight,b_spec,b_size,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,b_mount),1)),4,12)) b_mount,b_price,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,b_total),1)),4,12)) b_total,
-	p2,p1,a_cno
-from @tmp order by a_noa desc,p1,gno,orderno;
+	p2,p1,a_cno from @tmp order by a_noa desc,p1,gno,orderno;
