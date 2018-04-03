@@ -17,7 +17,7 @@
 		<script type="text/javascript">
             $(document).ready(function() {
             	q_getId();
-                q_gf('', 'z_rc2st');
+                q_gf('', 'z_rc2st_FP');
             });
             function q_gfPost() {
             	q_gt('style', "", 0, 0, 0, "");    
@@ -37,18 +37,9 @@
 				}
 			}
 			function loadFinish(){
-				var t_kind = '';
-				switch(q_getPara('sys.project').toUpperCase()){
-					case 'PK':
-						t_kind = q_getPara('sys.stktype')+',2@物料,3@委外';
-						break;
-					default:
-						t_kind = q_getPara('sys.stktype');
-						break;
-				}
-				
+				t_kind = q_getPara('sys.stktype');
 				$('#q_report').q_report({
-                    fileName : 'z_rc2st',
+                    fileName : 'z_rc2st_FP',
                     options : [
                     {// [1]
                         type : '0',
