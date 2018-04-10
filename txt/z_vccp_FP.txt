@@ -1,7 +1,7 @@
 z_vccp_fp1:--z_vccp_fp1
 declare @t_bxnoa nvarchar(20) = case when '#non' = [2] then '' else [2] end
 declare @t_exnoa nvarchar(20) = case when '#non' = [3] then CHAR(255) else [3] end
-declare @t_pageline int = 9   --------一頁幾行
+declare @t_pageline int = 10  --------一頁幾行
 declare @t_showprice nvarchar(10) = case when '#non' = [10] then 0 else [10] end
 ---------------------------------------------------------------------------------
 declare @tmp table(
@@ -10,8 +10,6 @@ declare @tmp table(
 	orderno int, p1 int, p2 int,
 	a_cno nvarchar(90),
 	a_noa nvarchar(30),
-	a_typea nvarchar(15),
-	a_stype nvarchar(15),
 	a_custno nvarchar(90),
 	a_comp nvarchar(90),
 	a_tel nvarchar(90),
@@ -39,14 +37,15 @@ declare @tmp table(
 insert into @tmp
 	select
 		'0',ROW_NUMBER()over(partition by a.noa order by a.noa,b.noq),1,1,a.cno,
-		a.noa,a.typea,a.stype,a.custno,c.comp,a.tel,
-		(case when a.addr2!='' then a.addr2 else a.addr end),a.datea,a.memo,
+		a.noa,a.custno,c.comp,a.tel,
+		(case when a.addr!='' then a.addr else a.addr2 end),a.datea,a.memo,
 		a.tax,a.money,a.total,a.weight,b.uno,dbo.charbr(b.productno,10),b.product,b.unit,b.dime,b.width,b.lengthb,b.spec,b.size,b.weight,b.mount,b.price,b.total
 	from view_vcc a
 	left join view_vccs b on a.noa = b.noa
 	left join cust c on a.custno = c.noa
 	outer apply(select noa,sum(round(total/1.05,0)) tax from view_vccs where a.noa=noa group by noa) e
 where (a.noa between @t_bxnoa and @t_exnoa)
+
 declare @a_noa nvarchar(30)
 declare @a_count int
 declare @idno int
@@ -90,27 +89,22 @@ begin
 	begin
 		while(@k > 0)
 		begin
-			insert into @tmp(gno,orderno,p1,a_noa,a_memo,a_typea,a_comp)
-				select '0',(@orderno+1),@p1,@a_noa,a_memo,a_typea,a_comp from @tmp where idno = @idno
+			insert into @tmp(gno,orderno,p1,a_noa,a_memo,a_comp)
+				select '0',(@orderno+1),@p1,@a_noa,a_memo,a_comp from @tmp where idno = @idno
 			set @k = @k-1
 			set @orderno = @orderno +1
 		end
 	end
-	insert into @tmp(gno,orderno,p1,a_noa,a_typea,a_comp,a_tax,a_money,a_total,a_weight,a_memo)
-		select '1',(@t_pageline+1),p1,a_noa,a_typea,a_comp,MAX(a_tax),MAX(a_money),MAX(a_total),MAX(a_weight),a_memo from @tmp where gno=0 and a_noa=@a_noa and p1=@p1 group by a_noa,p1,a_typea,a_comp,a_memo
-	insert into @tmp(gno,orderno,p1,a_noa,a_typea) 
-		select '2',(@t_pageline+2),p1,a_noa,a_typea from @tmp where gno=0 and a_noa=@a_noa and p1=@p1 group by a_noa,p1,a_typea
+	insert into @tmp(gno,orderno,p1,a_noa,a_comp,a_tax,a_money,a_total,a_weight,a_memo)
+		select '1',(@t_pageline+1),p1,a_noa,a_comp,MAX(a_tax),MAX(a_money),MAX(a_total),MAX(a_weight),a_memo from @tmp where gno=0 and a_noa=@a_noa and p1=@p1 group by a_noa,p1,a_comp,a_memo
+	insert into @tmp(gno,orderno,p1,a_noa)
+		select '2',(@t_pageline+2),p1,a_noa from @tmp where gno=0 and a_noa=@a_noa and p1=@p1 group by a_noa,p1
 	fetch next from cursor_table
 	into @a_noa,@orderno,@p1,@idno,@a_count
 end
 close cursor_table
 deallocate cursor_table
 
-update @tmp set a_typea = case a_typea when '1' then '出' when '2' then '退' else '' end
-update @tmp set a_stype = (case when a_stype='1' then '內銷'+a_typea+'貨單' when a_stype='2' then '代工'+a_typea+'貨單' 
-when a_stype='3' then '外銷'+a_typea+'貨單' when a_stype='4' and a_typea='出' then '樣品簽收單' 
-when a_stype='4' and a_typea='退' then '樣品退回單' else '' end)
- 
 if(@t_showprice = '0')
 begin
 	update @tmp set b_price=null, b_total=null, a_money=null, a_tax=null, a_total=null
@@ -122,7 +116,7 @@ from @tmp a
 
 
 select
-	gno,a_noa,a_typea,a_stype,a_custno,a_comp,a_tel,a_addr,a_datea
+	gno,a_noa,a_custno,a_comp,a_tel,a_addr,a_datea
 	,Replace(a_memo,'chr(10)','</BR>&nbsp') a_memo,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_tax),1)),4,12)) a_tax,
 	reverse(substring(reverse(convert(nvarchar(15),CONVERT(money,a_money),1)),4,12)) a_money,
