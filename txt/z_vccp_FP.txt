@@ -76,6 +76,8 @@ end
 close cursor_table
 deallocate cursor_table
 update @tmp set orderno = orderno-((p1-1)*@t_pageline)
+
+
 declare cursor_table cursor for
 	select distinct a_noa,max(orderno),p1,min(idno),count(*) from @tmp group by a_noa,p1
 open cursor_table
@@ -105,15 +107,20 @@ end
 close cursor_table
 deallocate cursor_table
 
+
 if(@t_showprice = '0')
 begin
 	update @tmp set b_price=null, b_total=null, a_money=null, a_tax=null, a_total=null
 end
 
+update @tmp set b_weight=null where b_weight=0
+update @tmp set b_mount=null where b_mount=0
+update @tmp set b_price=null where b_price=0
+update @tmp set b_total=null where b_total=0
+
 update a
 set p2=(select MAX(p1) from @tmp where a_noa=a.a_noa)
 from @tmp a
-
 
 select
 	gno,a_noa,a_custno,a_comp,a_tel,a_addr,a_datea
