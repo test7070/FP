@@ -81,6 +81,8 @@
                 string queryString = @" 
 										set @t_bno = case when len(@t_bno)=0 then char(255) else @t_bno end
 										set @t_eno = case when len(@t_eno)=0 then char(255) else @t_eno end
+										set @t_showprice = case when len(@t_eno)=0 then char(10) else @t_eno end
+										
 										declare @tmpa table(noa nvarchar(20),n int)
 										declare @tmpb table(
 											noa nvarchar(20),
@@ -112,11 +114,18 @@
 										where (a.noa between @t_bno and @t_eno) order by a.noa,b.noq
 
 										insert into @tmpa(noa,n)select noa,count(1) from @tmpb group by noa order by noa
-
+										
 										update @tmpb set total2 = b.total from @tmpb a
 										outer apply (select SUM(total) as total,noa from @tmpb where noa=a.noa group by noa)b
 										update @tmpb set datea = convert(nvarchar,dbo.ChineseEraName2AD(datea),120) select * from @tmpa
-										select * from @tmpb";
+										select * from @tmpb
+
+										if(@t_showprice = '0')
+										begin
+											update @tmpb set price=null, total=null, total2=null, total3=null, total4=null
+										end
+										
+										";
                 System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(queryString, connSource);
                 cmd.Parameters.AddWithValue("@t_bno", item.bno);
                 cmd.Parameters.AddWithValue("@t_eno", item.eno);

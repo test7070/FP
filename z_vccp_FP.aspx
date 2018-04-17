@@ -30,46 +30,42 @@
 	                        type : '0', //[1]
 	                        name : 'accy',
 	                        value : r_accy
-	                    },  {
+	                    },{
 	                        type : '1', //[2][3]
 	                        name : 'xnoa'
-	                    }, {
+	                    },{
 	                        type : '1', //[4][5]
 	                        name : 'date'
-	                    },
-	                    {
+	                    },{
 	                        type : '2', //[6][7]
 	                        name : 'cust',
 	                        dbf : 'cust',
 	                        index : 'noa,comp',
 	                        src : 'cust_b.aspx'
-	                    } , {
+	                    },{
 	                        type : '1', //[8][9]
 	                        name : 'xmon'
-						}, {
+						},{
 							type : '8',//[10]
 							name : 'xshowprice',
 							value : "1@".split(',')
-	                    }, {
+	                    },{
 	                        type : '0', //[11] //判斷顯示小數點
 	                        name : 'xacomp',
 	                        value : q_getPara('sys.comp')
 	                    }]
                     });
                 q_popAssign();
-                	
                 	$('#txtXmon1').mask('999/99');
 	                $('#txtXmon2').mask('999/99');
 	                $('#txtDate1').mask('999/99/99');
 	                $('#txtDate1').datepicker();
 	                $('#txtDate2').mask('999/99/99');
-	                $('#txtDate2').datepicker();  
-	                
+	                $('#txtDate2').datepicker();
 	            var t_noa=typeof(q_getId()[3])=='undefined'?'':q_getId()[3];
                 t_noa  =  t_noa.replace('noa=','');
                 $('#txtXnoa1').val(t_noa);
                 $('#txtXnoa2').val(t_noa);
-                
                 
                  var t_date,t_year,t_month,t_day;
 	                t_date = new Date();
@@ -81,7 +77,6 @@
 	                t_day = t_date.getUTCDate();
 	                t_day = t_day>9?t_day+'':'0'+t_day;
 	                $('#txtXmon1').val(t_year+'/'+t_month);
-	                
 	                t_date = new Date();
 	                t_date.setDate(35);
 	                t_date.setDate(0);
@@ -114,14 +109,10 @@
 	                t_day = t_date.getUTCDate();
 	                t_day = t_day>9?t_day+'':'0'+t_day;
 	                $('#txtDate2').val(t_year+'/'+t_month+'/'+t_day);
-	                
 	                $("input[type='checkbox'][value!='']").attr('checked', true);
             }
-
-            function q_boxClose(s2) {
-            }
-            function q_gtPost(s2) {
-            }
+            function q_boxClose(s2) {}
+            function q_gtPost(s2) {}
 		</script>
 	</head>
 	<body ondragstart="return false" draggable="false"
