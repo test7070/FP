@@ -112,7 +112,6 @@ if(@t_showprice = '0')
 begin
 	update @tmp set b_price=null, b_total=null, a_money=null, a_tax=null, a_total=null
 end
-
 update @tmp set b_weight=null where b_weight=0
 update @tmp set b_mount=null where b_mount=0
 update @tmp set b_price=null where b_price=0
