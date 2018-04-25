@@ -89,7 +89,7 @@
 				$('#btnOk2').click(function() {
 					var t_invoice = $.trim($('#txtYnoa').val());
 					var bno = $.trim($('#txtXnoa1').val());
-					var einvono = $.trim($('#txtXnoa2').val());
+					var eno = $.trim($('#txtXnoa2').val());
 					var detail = $('#chkXdetail').children().eq(0).prop('checked')?"true":"false";
 					var autoprint = $('#chkXautoprint').children().eq(0).prop('checked')?"true":"false";
 					var bdate = $.trim($('#txtXdate1').val());
