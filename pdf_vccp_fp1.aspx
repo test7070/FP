@@ -111,7 +111,7 @@
 										where (a.noa between @t_bno and @t_eno) order by a.noa,b.noq
 
 										insert into @tmpa(noa,n)select noa,count(1) from @tmpb group by noa order by noa
-
+										
 										update @tmpb set total2 = b.total from @tmpb a
 										outer apply (select SUM(total) as total,noa from @tmpb where noa=a.noa group by noa)b
 										update @tmpb set datea = convert(nvarchar,dbo.ChineseEraName2AD(datea),120) select * from @tmpa
@@ -201,7 +201,7 @@
                         cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).unit, 330, y, 0);
                         cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).weight.ToString(), 435, y, 0);
                         cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).price.ToString(), 515, y, 0);
-                        cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).total.ToString(), 610, y, 0);
+						cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).total.ToString(), 610, y, 0);
 						if (((Item)vcc[j].item[i]).uno.Length > 10){
 							cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).product, 3, y, 0);
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).uno, 3, y -= 10, 0);
