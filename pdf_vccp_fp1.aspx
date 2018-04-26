@@ -9,7 +9,7 @@
         }
         public class Item{
             public string accy, noa, noq;
-            public string datea,tel,addr,vccno,cust,product,uno,size,unit,memo;
+            public string datea,tel,addr,vccno,custno,cust,product,uno,size,unit,memo;
             public float mount,weight,price,total,total2,total3,total4,tweight;
             public float t_total;
        }
@@ -41,7 +41,7 @@
             else if (item.Length > 11 && item.Length % 11 == 0)
                 cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, +page + "/" + (item.Length / 12), 500, 350, 0);
 
-            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)item[0]).cust, 65, 335, 0);
+            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)item[0]).custno + " " + ((Item)item[0]).cust, 65, 335, 0);
             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)item[0]).tel, 350, 335, 0);
             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)item[0]).vccno, 535, 335, 0);
 
@@ -88,6 +88,7 @@
 											vccno nvarchar(50),
 											tel nvarchar(50),
 											addr nvarchar(50),
+											custno nvarchar(90),
 											cust nvarchar(max),
 											product nvarchar(max),
 											uno nvarchar(max),
@@ -103,8 +104,8 @@
 											total4 float,
 											tweight float
 										)
-										insert into @tmpb(noa,noq,datea,vccno,tel,addr,cust,product,uno,size,unit,memo,mount,weight,price,total,total3,total4,tweight)
-										select b.noa,b.noq,a.datea,a.noa,a.tel,a.addr,a.comp,b.product,b.uno,b.size,b.unit,a.memo,b.mount,b.weight,b.price,b.total,a.tax,a.total,a.weight
+										insert into @tmpb(noa,noq,datea,vccno,tel,addr,custno,cust,product,uno,size,unit,memo,mount,weight,price,total,total3,total4,tweight)
+										select b.noa,b.noq,a.datea,a.noa,a.tel,a.addr,a.custno,a.comp,b.product,b.uno,b.size,b.unit,a.memo,b.mount,b.weight,b.price,b.total,a.tax,a.total,a.weight
 										from view_vcc a
 										left join view_vccs b on a.noa = b.noa
 										left join cust c on a.custno = c.noa
@@ -115,7 +116,11 @@
 										update @tmpb set total2 = b.total from @tmpb a
 										outer apply (select SUM(total) as total,noa from @tmpb where noa=a.noa group by noa)b
 										update @tmpb set datea = convert(nvarchar,dbo.ChineseEraName2AD(datea),120) select * from @tmpa
-										select * from @tmpb";
+										select * from @tmpb
+
+                                        update @tmpb set weight='' where weight=0
+
+                                        ";
                 System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(queryString, connSource);
                 cmd.Parameters.AddWithValue("@t_bno", item.bno);
                 cmd.Parameters.AddWithValue("@t_eno", item.eno);
@@ -138,20 +143,21 @@
                         vcc[i].item[n].vccno = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[3]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[3];
                         vcc[i].item[n].tel = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[4]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[4];
                         vcc[i].item[n].addr = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[5]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[5];
-                        vcc[i].item[n].cust = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[6]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[6];
-                        vcc[i].item[n].product = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[7]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[7];
-                        vcc[i].item[n].uno = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[8]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[8];
-                        vcc[i].item[n].size = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[9]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[9];
-                        vcc[i].item[n].unit = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[10]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[10];
-                        vcc[i].item[n].memo = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[11]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[11];
-                        vcc[i].item[n].mount = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[12]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[12];
-                        vcc[i].item[n].weight = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[13]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[13];
-                        vcc[i].item[n].price = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[14]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[14];
-                        vcc[i].item[n].total = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[15]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[15];
-                        vcc[i].item[n].total2 = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[16]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[16];
-                        vcc[i].item[n].total3 = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[17]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[17];
-                        vcc[i].item[n].total4 = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[18]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[18];
-                        vcc[i].item[n].tweight = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[19]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[19];
+                        vcc[i].item[n].custno = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[6]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[6];
+                        vcc[i].item[n].cust = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[7]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[7];
+                        vcc[i].item[n].product = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[8]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[8];
+                        vcc[i].item[n].uno = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[9]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[9];
+                        vcc[i].item[n].size = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[10]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[10];
+                        vcc[i].item[n].unit = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[11]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[11];
+                        vcc[i].item[n].memo = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[12]) ? "" : (System.String)ds.Tables[1].Rows[j].ItemArray[12];
+                        vcc[i].item[n].mount = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[13]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[13];
+                        vcc[i].item[n].weight = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[14]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[14];
+                        vcc[i].item[n].price = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[15]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[15];
+                        vcc[i].item[n].total = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[16]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[16];
+                        vcc[i].item[n].total2 = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[17]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[17];
+                        vcc[i].item[n].total3 = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[18]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[18];
+                        vcc[i].item[n].total4 = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[19]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[19];
+                        vcc[i].item[n].tweight = System.DBNull.Value.Equals(ds.Tables[1].Rows[j].ItemArray[20]) ? 0 : (float)(System.Double)ds.Tables[1].Rows[j].ItemArray[20];
                         n++;
                     }  
                 }
@@ -188,7 +194,7 @@
                         if (i == 0){
                             inputTitle(cb, vcc[j].item, page);
                         }
-                        if (i >= 11 && i % 11 == 0){
+                        if (i >= 10 && i % 10 == 0){
                             doc1.NewPage();
                             page++;
                             y = 260;
@@ -196,12 +202,41 @@
                         }
                         cb.BeginText();	 //TEXT
                         cb.SetFontAndSize(bfChinese, 10);
-                        cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).size, 103, y, 0);
-                        cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).mount.ToString(), 310, y, 0);
+                        
+                        if (vcc[j].item[i].mount == 0){
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 310, y, 0);
+                        }else{
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).mount.ToString(), 310, y, 0);
+                        }
+                        
                         cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).unit, 330, y, 0);
-                        cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).weight.ToString(), 435, y, 0);
-                        cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).price.ToString(), 515, y, 0);
-						cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).total.ToString(), 610, y, 0);
+                        if (vcc[j].item[i].weight == 0){
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 435, y, 0);
+                        }else {
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).weight.ToString(), 435, y, 0);
+                        }
+                        
+                        if (vcc[j].item[i].price == 0){
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 515, y, 0);
+                        }else{
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).price.ToString(), 515, y, 0);
+                        }
+
+                        if (vcc[j].item[i].total == 0)
+                        {
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 610, y, 0);
+                        }else{
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).total.ToString(), 610, y, 0);
+                        }
+
+                        if (((Item)vcc[j].item[i]).size.Length > 33){
+							cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).size.Substring(0, 33), 103, y, 0);
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).size.Substring(33, ((Item)vcc[j].item[i]).size.Length - 33), 103, y -= 10, 0);
+						}else{
+							cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).size, 103, y, 0);
+						}
+						
+						
 						if (((Item)vcc[j].item[i]).uno.Length > 10){
 							cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).product, 3, y, 0);
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).uno, 3, y -= 10, 0);
