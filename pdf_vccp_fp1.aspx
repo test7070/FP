@@ -201,7 +201,7 @@
                             inputTitle(cb, vcc[j].item, page);
                         }
                         cb.BeginText();	 //TEXT
-                        cb.SetFontAndSize(bfChinese, 10);
+                        cb.SetFontAndSize(bfChinese, 11);
                         
                         if (vcc[j].item[i].mount == 0){
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 310, y, 0);
