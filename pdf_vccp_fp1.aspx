@@ -197,7 +197,7 @@
                         if (i >= 10 && i % 10 == 0){
                             doc1.NewPage();
                             page++;
-                            y = 260;
+                            y = 275;
                             inputTitle(cb, vcc[j].item, page);
                         }
                         cb.BeginText();	 //TEXT
