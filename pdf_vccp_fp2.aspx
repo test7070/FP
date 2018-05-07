@@ -192,9 +192,22 @@
                         cb.BeginText();	 //TEXT 
                         cb.SetFontAndSize(bfChinese, 10);
                         cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).size, 103, y, 0);
-                        cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).mount.ToString(), 310, y, 0);
+                        
                         cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).unit, 330, y, 0);
-                        cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).weight.ToString(), 435, y, 0);
+
+
+                        if (vcc[j].item[i].mount == 0){
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 310, y, 0);
+                        }else{
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).mount.ToString(), 310, y, 0);
+                        }
+                        
+                        if (((Item)vcc[j].item[i]).weight == 0){
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 435, y, 0);
+                        }else{
+                            cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).weight.ToString(), 435, y, 0);
+                        }
+                        
 						if (((Item)vcc[j].item[i]).uno.Length > 10){
 							cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).product, 3, y, 0);
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).uno, 3, y -= 10, 0);
