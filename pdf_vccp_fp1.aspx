@@ -204,46 +204,45 @@
                         cb.BeginText();	 //TEXT
                         cb.SetFontAndSize(bfChinese, 11);
                         
-                        if (vcc[j].item[i].mount == 0){
+                        if (vcc[j].item[i].mount == 0){          //數量
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 310, y, 0);
                         }else{
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).mount.ToString(), 310, y, 0);
                         }
                         
                         cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).unit, 330, y, 0);
-                        if (vcc[j].item[i].weight == 0){
+                        if (vcc[j].item[i].weight == 0){          //重量
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 435, y, 0);
                         }else {
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).weight.ToString(), 435, y, 0);
                         }
                         
-                        if (vcc[j].item[i].price == 0){
+                        if (vcc[j].item[i].price == 0){          //單價
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 515, y, 0);
                         }else{
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).price.ToString(), 515, y, 0);
                         }
 
-                        if (vcc[j].item[i].total == 0)
-                        {
+                        if (vcc[j].item[i].total == 0){          //總計
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, "", 610, y, 0);
                         }else{
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_RIGHT, ((Item)vcc[j].item[i]).total.ToString(), 610, y, 0);
                         }
 
-                        if (((Item)vcc[j].item[i]).size.Length > 33){
+                        if (((Item)vcc[j].item[i]).size.Length > 33){          //尺寸
 							cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).size.Substring(0, 33), 103, y, 0);
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).size.Substring(33, ((Item)vcc[j].item[i]).size.Length - 33), 103, y -= 10, 0);
 						}else{
 							cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).size, 103, y, 0);
 						}
 						
-						
-						if (((Item)vcc[j].item[i]).uno.Length > 10){
+						if (((Item)vcc[j].item[i]).uno.Length > 10){          //品名型號
 							cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).product, 3, y, 0);
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).uno, 3, y -= 10, 0);
 						}else{
                             cb.ShowTextAligned(iTextSharp.text.pdf.PdfContentByte.ALIGN_LEFT, ((Item)vcc[j].item[i]).product + ((Item)vcc[j].item[i]).uno, 3, y, 0); // 要判斷uno超過8個字元後跳下一行
 						}
+						
                         cb.EndText();
                     }
                 }
