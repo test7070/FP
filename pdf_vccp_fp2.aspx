@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" Debug="true"%>
+﻿﻿<%@ Page Language="C#" Debug="true"%>
     <script language="c#" runat="server">           //出貨單列印_榮泉
         public class ParaIn{
             public string bno = "", eno = "";
@@ -234,7 +234,7 @@
             doc1.Close();
             Response.ContentType = "application/octec-stream;";
             Response.AddHeader("Content-transfer-encoding", "binary");
-            Response.AddHeader("Content-Disposition", "attachment;filename=出貨單列印.pdf");
+            Response.AddHeader("Content-Disposition", "attachment;filename=出貨單列印-無單價.pdf");
             Response.BinaryWrite(stream.ToArray());
             Response.End();
         }
