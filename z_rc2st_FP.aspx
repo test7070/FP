@@ -19,7 +19,7 @@
             	q_getId();
                 q_gf('', 'z_rc2st_FP');
             });
-            function q_gfPost() {
+            function q_gfPost(){
             	q_gt('style', "", 0, 0, 0, "");    
             	//loadScript("css/jquery/ui/jquery.ui.datepicker.js");
             }
